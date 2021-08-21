@@ -69,6 +69,17 @@ const secondsRingSvg = `
 `
 
 // =============================================================================
+// Display logic
+
+/**
+ * @param {HTMLElement} ring
+ * @param {number} fraction
+*/
+function setRingFraction(ring, fraction) {
+    ring.style.transform = `rotate(${fraction}turn)`;
+}
+
+// =============================================================================
 // Main
 
 const root = document.getElementById('root');
@@ -87,3 +98,11 @@ function initDisplay() {
 }
 
 initDisplay();
+
+function step(_timestamp) {
+    const now = new Date();
+    const secondsFraction = now.getMilliseconds() / 1000;
+    setRingFraction(rings[0], secondsFraction);
+    window.requestAnimationFrame(step);
+}
+window.requestAnimationFrame(step);
