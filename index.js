@@ -35,8 +35,7 @@ xmlns:ev="http://www.w3.org/2001/xml-events"`;
 
 const clockSvg = `
 <svg ${svgProps}
-    width="100vw"
-    height="100vh"
+    style="width: 100vw; height: 100vh;"
     viewBox="0 0 ${config.viewRadiusMm * 2} ${config.viewRadiusMm * 2}"
 >
     <circle
