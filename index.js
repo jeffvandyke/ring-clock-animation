@@ -115,7 +115,7 @@ stroke="${theme.black}" stroke-width="${config.ringBorderMm}" fill="none"`;
 
 /** @type {Array<HTMLElement>} */
 let rings /* = [ seconds, minutes, hours... ]*/;
-let periods = [1, 60, 3600, 3600 * 24, 10, 20, 30];
+let periods = [1, 60, 3600, 3600 * 24, 30, 10, 5];
 
 function initDisplay() {
         // ${generateRingSvg(periods[1], 1, 7)}
