@@ -78,12 +78,6 @@ const secondsRingSvg = `
 // =============================================================================
 // Display logic
 
-// =============================================================================
-// Main
-
-const root = document.getElementById('root');
-const debugTime = document.getElementById('debug-time');
-
 /** @type {Array<HTMLElement>} */
 let rings /* = [ seconds, minutes, hours... ]*/;
 
@@ -91,21 +85,28 @@ function initDisplay() {
     root.innerHTML = `
         ${clockSvg}
         ${secondsRingSvg}
-    `
+    `;
 
     rings = [
         document.getElementById('secondsRingSvg'),
     ];
 }
 
-function setAnimationDelays() {
+function calibrateAnimations() {
     const now = new Date();
     const secondsFraction = now.getMilliseconds() / 1000;
-    rings[0].style.animationDelay = `-${secondsFraction}s`;
+    const secondsAnimation = rings[0].getAnimations()[0];
+    secondsAnimation.currentTime = secondsFraction * 1000;
 }
 
+// =============================================================================
+// Main
+
+const root = document.getElementById('root');
+const debugTime = document.getElementById('debug-time');
+
 initDisplay();
-setAnimationDelays();
+calibrateAnimations();
 
 function step(_timestamp) {
     const now = new Date();
