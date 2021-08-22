@@ -9,10 +9,31 @@ html, body {
     padding: 0;
     overflow: hidden;
 }
+
+#debug {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+}
+
+@keyframes rotate {
+    0% {
+        transform: rotate(0);
+    }
+    100% {
+        transform: rotate(-360deg);
+    }
+}
 </style>
 </head>
 <body>
     <div id="root"></div>
+    <div id="debug">
+        <dl>
+            <dt>Time</dt>
+            <dd id="debug-time"></dd>
+        </dl>
+    </div>
     <script src="./index.js"></script>
 </body>
 </html>

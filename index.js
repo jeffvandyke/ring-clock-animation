@@ -49,8 +49,15 @@ const clockSvg = `
 </svg>
 `;
 
+/**
+ * @param {number} period - number of seconds in the spin cycle
+ */
+function generateSpinCss(period) {
+    return `animation: ${period}s linear rotate infinite`;
+}
+
 const secondsRingSvg = `
-<svg id="secondsRingSvg" ${svgProps} style="position: absolute; width: 100vw; height: 100vh;">
+<svg id="secondsRingSvg" ${svgProps} style="position: absolute; width: 100vw; height: 100vh; ${generateSpinCss(1)}">
     <circle
         cx="${config.viewRadiusMm}"
         cy="${config.viewRadiusMm}"
@@ -71,19 +78,13 @@ const secondsRingSvg = `
 // =============================================================================
 // Display logic
 
-/**
- * @param {HTMLElement} ring
- * @param {number} fraction
-*/
-function setRingFraction(ring, fraction) {
-    ring.style.transform = `rotate(${fraction}turn)`;
-}
-
 // =============================================================================
 // Main
 
 const root = document.getElementById('root');
+const debugTime = document.getElementById('debug-time');
 
+/** @type {Array<HTMLElement>} */
 let rings /* = [ seconds, minutes, hours... ]*/;
 
 function initDisplay() {
@@ -97,12 +98,22 @@ function initDisplay() {
     ];
 }
 
+function setAnimationDelays() {
+    const now = new Date();
+    const secondsFraction = now.getMilliseconds() / 1000;
+    rings[0].style.animationDelay = `-${secondsFraction}s`;
+}
+
 initDisplay();
+setAnimationDelays();
 
 function step(_timestamp) {
     const now = new Date();
     const secondsFraction = now.getMilliseconds() / 1000;
-    setRingFraction(rings[0], secondsFraction);
+
+    debugTime.innerText = `${now.toISOString()} - fracSec: ${secondsFraction}`;
+    debugTime.style.backgroundColor = secondsFraction > 0.5 ? 'gray' : 'white';
+
     window.requestAnimationFrame(step);
 }
 window.requestAnimationFrame(step);
