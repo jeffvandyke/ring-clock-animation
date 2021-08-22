@@ -9,7 +9,7 @@ const config = {
     clockBorderMm: 1,
     ringBorderMm: 0.7,
     secondsRingRadiusMm: 50,
-    // TODO: ringGapMm: 5,
+    ringGapMm: 5,
     // TODO: majorTickLengthRatio: 1,
     // TODO: minorTickLengthRatio: 0.1,
 };
@@ -73,29 +73,66 @@ const secondsRingSvg = `
         "
     />
 </svg>
-`
+`;
+
+function getRingRadii(number, total) {
+    const totalStart = config.secondsRingRadiusMm + config.ringGapMm;
+    const totalEndIncludingGap = config.clockRadiusMm;
+    const ringInterval = (totalEndIncludingGap - totalStart) / (total - 1);
+    const ringWidth = ringInterval - config.ringGapMm;
+
+    const thisRingStart = totalStart + (number - 1) * ringInterval;
+
+    return {
+        innerMm: thisRingStart,
+        centerMm: thisRingStart + (ringWidth / 2),
+        outerMm: thisRingStart + ringWidth,
+    };
+}
+
+function generateRingSvg(period, number, total) {
+    const { innerMm, centerMm, outerMm } = getRingRadii(number, total);
+    const borderProps = `cx="${config.viewRadiusMm}" cy="${config.viewRadiusMm}" \
+stroke="${theme.black}" stroke-width="${config.ringBorderMm}" fill="none"`;
+    return `
+<svg id="ringNumber${number}" ${svgProps} style="position: absolute; width: 100vw; height: 100vh; ${generateSpinCss(period)}">
+    <circle ${borderProps} r="${innerMm}" />
+    <circle ${borderProps} r="${outerMm}" />
+    <circle cx="${config.viewRadiusMm}" cy="${config.viewRadiusMm}"
+        stroke="${theme.primaryLight}" stroke-width="${outerMm - innerMm}" fill="none"
+        stroke-dasharray="60,20"
+        r="${centerMm}"
+    />
+</svg>`;
+}
 
 // =============================================================================
 // Display logic
 
 /** @type {Array<HTMLElement>} */
 let rings /* = [ seconds, minutes, hours... ]*/;
+let periods = [1, 0.5, 1, 2, 3, 4, 5 /* , 60 * 60, 60 * 60 * 24... */];
 
 function initDisplay() {
+        // ${generateRingSvg(periods[1], 1, 7)}
     root.innerHTML = `
         ${clockSvg}
         ${secondsRingSvg}
+        ${periods.slice(1).map((p, i) => generateRingSvg(p, i + 1, 7)).join('\n')}
     `;
 
     rings = [
         document.getElementById('secondsRingSvg'),
+        document.getElementById('ringNumber1'),
     ];
 }
 
 function calibrateAnimations() {
     const now = new Date();
     const secondsFraction = now.getMilliseconds() / 1000;
-    const secondsAnimation = rings[0].getAnimations()[0];
+    const [
+        secondsAnimation,
+    ] = rings.map(ring => ring.getAnimations()[0]);
     secondsAnimation.currentTime = secondsFraction * 1000;
 }
 
