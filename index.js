@@ -99,9 +99,13 @@ stroke="${theme.black}" stroke-width="${config.ringBorderMm}" fill="none"`;
     <circle ${borderProps} r="${innerMm}" />
     <circle ${borderProps} r="${outerMm}" />
     <circle cx="${config.viewRadiusMm}" cy="${config.viewRadiusMm}"
-        stroke="${theme.primaryLight}" stroke-width="${outerMm - innerMm}" fill="none"
+        stroke="${theme.primaryLight}" stroke-width="${outerMm - innerMm - config.ringBorderMm}" fill="none"
         stroke-dasharray="60,20"
         r="${centerMm}"
+    />
+    <line x1="${config.viewRadiusMm}" x2="${config.viewRadiusMm}"
+        y1="${config.viewRadiusMm - innerMm}" y2="${config.viewRadiusMm - outerMm}"
+        stroke="${theme.black}"
     />
 </svg>`;
 }
@@ -111,7 +115,7 @@ stroke="${theme.black}" stroke-width="${config.ringBorderMm}" fill="none"`;
 
 /** @type {Array<HTMLElement>} */
 let rings /* = [ seconds, minutes, hours... ]*/;
-let periods = [1, 0.5, 1, 2, 3, 4, 5 /* , 60 * 60, 60 * 60 * 24... */];
+let periods = [1, 60, 3600, 3600 * 24, 10, 20, 30];
 
 function initDisplay() {
         // ${generateRingSvg(periods[1], 1, 7)}
@@ -124,16 +128,30 @@ function initDisplay() {
     rings = [
         document.getElementById('secondsRingSvg'),
         document.getElementById('ringNumber1'),
+        document.getElementById('ringNumber2'),
+        document.getElementById('ringNumber3'),
+        document.getElementById('ringNumber4'),
+        document.getElementById('ringNumber5'),
+        document.getElementById('ringNumber6'),
     ];
 }
 
 function calibrateAnimations() {
     const now = new Date();
-    const secondsFraction = now.getMilliseconds() / 1000;
     const [
         secondsAnimation,
+        minutesAnimation,
+        hoursAnimation,
+        daysAnimation,
     ] = rings.map(ring => ring.getAnimations()[0]);
+    const secondsFraction = now.getMilliseconds() / 1000;
     secondsAnimation.currentTime = secondsFraction * 1000;
+    const minutesFraction = (now.getSeconds() + secondsFraction) / 60;
+    minutesAnimation.currentTime = minutesFraction * 1000 * 60;
+    const hoursFraction = (now.getMinutes() + minutesFraction) / 60;
+    hoursAnimation.currentTime = hoursFraction * 1000 * 60 * 60;
+    const daysFraction = (now.getHours() + hoursFraction) / 24;
+    daysAnimation.currentTime = daysFraction * 1000 * 60 * 60 * 24;
 }
 
 // =============================================================================
