@@ -75,13 +75,13 @@ const secondsRingSvg = `
 </svg>
 `;
 
-function getRingRadii(number, total) {
+function getRingRadii(ringNumber, total) {
     const totalStart = config.secondsRingRadiusMm + config.ringGapMm;
     const totalEndIncludingGap = config.clockRadiusMm;
     const ringInterval = (totalEndIncludingGap - totalStart) / (total - 1);
     const ringWidth = ringInterval - config.ringGapMm;
 
-    const thisRingStart = totalStart + (number - 1) * ringInterval;
+    const thisRingStart = totalStart + (ringNumber - 1) * ringInterval;
 
     return {
         innerMm: thisRingStart,
@@ -90,12 +90,12 @@ function getRingRadii(number, total) {
     };
 }
 
-function generateRingSvg(period, number, total) {
-    const { innerMm, centerMm, outerMm } = getRingRadii(number, total);
+function generateRingSvg(period, ringNumber, total) {
+    const { innerMm, centerMm, outerMm } = getRingRadii(ringNumber, total);
     const borderProps = `cx="${config.viewRadiusMm}" cy="${config.viewRadiusMm}" \
 stroke="${theme.black}" stroke-width="${config.ringBorderMm}" fill="none"`;
     return `
-<svg id="ringNumber${number}" ${svgProps} style="position: absolute; width: 100vw; height: 100vh; ${generateSpinCss(period)}">
+<svg id="ringNumber${ringNumber}" ${svgProps} style="position: absolute; width: 100vw; height: 100vh; ${generateSpinCss(period)}">
     <circle ${borderProps} r="${innerMm}" />
     <circle ${borderProps} r="${outerMm}" />
     <circle cx="${config.viewRadiusMm}" cy="${config.viewRadiusMm}"
