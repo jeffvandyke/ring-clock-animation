@@ -71,7 +71,7 @@ const secondsRingSvg = `
     <path fill="${theme.black}"
         d="M ${config.viewRadiusMm},${config.viewRadiusMm}
            v -${config.secondsRingRadiusMm}
-           a ${config.secondsRingRadiusMm} ${config.secondsRingRadiusMm} 180 0 0 0 ${config.secondsRingRadiusMm * 2}
+           a ${config.secondsRingRadiusMm} ${config.secondsRingRadiusMm} 180 0 1 0 ${config.secondsRingRadiusMm * 2}
         "
     />
 </svg>
@@ -245,7 +245,7 @@ function step(_timestamp) {
     const secondsFraction = now.getMilliseconds() / 1000;
 
     debugTime.innerText = `${now.toISOString()} - fracSec: ${secondsFraction}`;
-    debugTime.style.backgroundColor = secondsFraction > 0.5 ? 'gray' : 'white';
+    debugTime.style.backgroundColor = secondsFraction < 0.5 ? 'gray' : 'white';
 
     window.requestAnimationFrame(step);
 }
