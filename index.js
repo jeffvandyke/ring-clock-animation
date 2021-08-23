@@ -265,6 +265,8 @@ document.addEventListener("visibilitychange", () => {
     }
 });
 
+root.addEventListener('click', calibrateAnimations);
+
 function debugStep(_timestamp) {
     const now = new Date();
     const secondsFraction = now.getMilliseconds() / 1000;
