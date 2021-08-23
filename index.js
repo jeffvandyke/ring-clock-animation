@@ -165,6 +165,21 @@ function generateRingSvg(period, ringNumber, total) {
 </svg>`;
 }
 
+const vc = config.viewRadiusMm;
+
+const markerSvg = `<svg id="marker" ${svgProps} style="position: absolute; width: 100vw; height: 100vh;">
+    <line x1="${config.viewRadiusMm}" x2="${vc}" y1="${vc}" y2="${vc - config.clockRadiusMm - 10}"
+        stroke="#F44" stroke-width="1"
+    />
+    <rect x="${vc - 10}" width="20" y="${vc - config.clockRadiusMm - 10}" height="${config.clockRadiusMm + 10}"
+        stroke="${theme.secondaryDark}" stroke-width="2" fill="none"
+    />
+    <rect x="${vc - 10}" width="20" y="${vc - config.clockRadiusMm - 10}" height="${config.clockRadiusMm + 10}"
+        fill="${theme.secondaryLight}" opacity="0.5"
+    />
+    <circle cx="${vc}" cy="${vc}" r="15" stroke="black" fill="#333" />
+</svg>`;
+
 // =============================================================================
 // Display logic
 
@@ -177,6 +192,7 @@ function initDisplay() {
         ${clockSvg}
         ${secondsRingSvg}
         ${periods.slice(1).map((p, i) => generateRingSvg(p, i + 1, 7)).join('\n')}
+        ${markerSvg}
     `;
 
     rings = [
