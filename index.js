@@ -4,7 +4,7 @@
 // Configuration
 
 const config = {
-    viewRadiusMm: 350,
+    viewRadiusMm: 315,
     clockRadiusMm: 300,
     clockBorderMm: 2,
     ringBorderMm: 1,
@@ -97,7 +97,7 @@ const ringTickConfig = [
     [0, 0], // (unusued)
     [60, 5], // seconds wheel (1 min)
     [60, 5], // minutes wheel (1 hour)
-    [24, 3], // hours wheel (1 day)
+    [24 * 2, 2], // hours wheel (1 day)
     [300, 10], // (extra)
     [100, 10], // (extra)
     [50, 10], // (extra)
@@ -117,7 +117,7 @@ const ringTitles = [
 ['', 0],
 ['Seconds', 12],
 ['Minutes', 7],
-['HH', 11],
+['HH', 11.5],
 ['Seconds div 30', 16],
 ['Seconds div 10', 16],
 ['Seconds div 5', 16]
