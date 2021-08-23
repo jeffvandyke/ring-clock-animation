@@ -18,7 +18,7 @@ const config = {
 
 const vc = config.viewRadiusMm;
 
-/** From <https://coolors.co/palettes/trending>, 3rd entry */
+/** Partially from <https://coolors.co/palettes/trending>, 3rd entry */
 const theme = {
     primaryDark: '#cb997e',
     primaryMed: '#ddbea9',
@@ -27,6 +27,7 @@ const theme = {
     secondaryMed: '#a5a58d',
     secondaryDark: '#6b705c',
     black: '#000000',
+    indicatorRed: '#F44',
 };
 
 // =============================================================================
@@ -186,14 +187,14 @@ function generateRingSvg(period, ringNumber, total) {
 }
 
 const markerSvg = `<svg id="marker" ${svgProps} style="position: absolute; width: 100vw; height: 100vh;">
-    <line x1="${vc}" x2="${vc}" y1="${vc}" y2="${vc - config.clockRadiusMm - 10}"
-        stroke="#F44" stroke-width="1"
-    />
     <rect x="${vc - 10}" width="20" y="${vc - config.clockRadiusMm - 10}" height="${config.clockRadiusMm + 10}"
         stroke="${theme.secondaryDark}" stroke-width="2" fill="none"
     />
     <rect x="${vc - 10}" width="20" y="${vc - config.clockRadiusMm - 10}" height="${config.clockRadiusMm + 10}"
         fill="${theme.secondaryLight}" opacity="0.5"
+    />
+    <line x1="${vc}" x2="${vc}" y1="${vc}" y2="${vc - config.clockRadiusMm - 10}"
+        stroke="${theme.indicatorRed}" stroke-width="1"
     />
     <circle cx="${vc}" cy="${vc}" r="15" stroke="black" fill="#333" />
 </svg>`;
