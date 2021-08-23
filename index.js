@@ -105,13 +105,23 @@ const ringTickConfig = [
 
 const allRingLabels = [
     [], // unused
-    ['0', '5', '10', '15', '20', '25', '30', '35', '40', '45', '50', '55'],
+    ['0', '', '10', '15', '20', '25', '30', '35', '40', '45', '50', '55'],
     ['0', '5', '10', '15', '20', '25', '30', '35', '40', '45', '50', '55'],
     ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23'],
-    ['30', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29'],
+    ['30', '', '', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29'],
     ['10', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
     ['5', '1', '2', '3', '4'],
 ]
+
+const ringTitles = [
+['', 0],
+['Seconds', 12],
+['Minutes', 7],
+['Hrs', 10],
+['Seconds div 30', 16],
+['Seconds div 10', 16],
+['Seconds div 5', 16]
+];
 
 function generateRingSvg(period, ringNumber, total) {
     const { innerMm, centerMm, outerMm } = getRingRadii(ringNumber, total);
@@ -123,6 +133,7 @@ function generateRingSvg(period, ringNumber, total) {
         .map((_, i) => ({ frac: i / tickCount, isMajor: i % tickMajorMod === 0 }));
 
     const ringLabels = allRingLabels[ringNumber];
+    const [ringTitle, ringTitleOffset] = ringTitles[ringNumber];
 
     return `
 <svg id="ringNumber${ringNumber}" ${svgProps} style="position: absolute; width: 100vw; height: 100vh; ${generateSpinCss(period)}">
@@ -150,6 +161,7 @@ function generateRingSvg(period, ringNumber, total) {
     </g>
     <g font-family="Times, 'Times New Roman', Georgia, serif"
         font-size="14px"
+        ${ringNumber === 3 ? 'font-weight="bold"' : ''}
         text-anchor="middle"
         dominant-baseline="central"
     >
@@ -161,6 +173,15 @@ function generateRingSvg(period, ringNumber, total) {
                 >${label}</text>`;
         })}
     </g>
+    <path id="titlePath${ringNumber}" display="none"
+        d="M ${vc},${vc - centerMm} a ${centerMm} ${centerMm} 180 0 1 0 ${centerMm * 2}"
+    />
+    <text dominant-baseline="central"
+        font-family="Veranda, sans-serif" font-style="italic" font-size="12">
+        <textPath href="#titlePath${ringNumber}" startOffset="${ringTitleOffset}">
+            ${ringTitle}
+        </textPath>
+    </text>
 </svg>`;
 }
 
