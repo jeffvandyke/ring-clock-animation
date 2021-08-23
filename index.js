@@ -213,6 +213,9 @@ function calibrateAnimations() {
         minutesAnimation,
         hoursAnimation,
         daysAnimation,
+        secDiv30Animation,
+        secDiv10Animation,
+        secDiv5Animation,
     ] = rings.map(ring => ring.getAnimations()[0]);
     const secondsFraction = now.getMilliseconds() / 1000;
     secondsAnimation.currentTime = secondsFraction * 1000;
@@ -222,6 +225,10 @@ function calibrateAnimations() {
     hoursAnimation.currentTime = hoursFraction * 1000 * 60 * 60;
     const daysFraction = (now.getHours() + hoursFraction) / 24;
     daysAnimation.currentTime = daysFraction * 1000 * 60 * 60 * 24;
+
+    secDiv30Animation.currentTime = (minutesFraction * 1000 * 60);
+    secDiv10Animation.currentTime = (minutesFraction * 1000 * 60);
+    secDiv5Animation.currentTime = (minutesFraction * 1000 * 60);
 }
 
 // =============================================================================
