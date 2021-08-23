@@ -103,6 +103,16 @@ const ringTickConfig = [
     [50, 10], // (extra)
 ]
 
+const allRingLabels = [
+    [], // unused
+    ['0', '5', '10', '15', '20', '25', '30', '35', '40', '45', '50', '55'],
+    ['0', '5', '10', '15', '20', '25', '30', '35', '40', '45', '50', '55'],
+    ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23'],
+    ['30', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29'],
+    ['10', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
+    ['5', '1', '2', '3', '4'],
+]
+
 function generateRingSvg(period, ringNumber, total) {
     const { innerMm, centerMm, outerMm } = getRingRadii(ringNumber, total);
     const ringWidthMm = outerMm - innerMm;
@@ -111,6 +121,8 @@ function generateRingSvg(period, ringNumber, total) {
 
     const tickArray = Array.from(Array(tickCount))
         .map((_, i) => ({ frac: i / tickCount, isMajor: i % tickMajorMod === 0 }));
+
+    const ringLabels = allRingLabels[ringNumber];
 
     return `
 <svg id="ringNumber${ringNumber}" ${svgProps} style="position: absolute; width: 100vw; height: 100vh; ${generateSpinCss(period)}">
@@ -121,11 +133,6 @@ function generateRingSvg(period, ringNumber, total) {
     <circle cx="${config.viewRadiusMm}" cy="${config.viewRadiusMm}"
         stroke="${theme.primaryLight}" stroke-width="${outerMm - innerMm - config.ringBorderMm}" fill="none"
         r="${centerMm}"
-    />
-    <!-- TODO: remove once ticks are in place -->
-    <line x1="${config.viewRadiusMm}" x2="${config.viewRadiusMm}"
-        y1="${config.viewRadiusMm - innerMm}" y2="${config.viewRadiusMm - outerMm}"
-        stroke="${theme.black}"
     />
     <g stroke="${theme.black}">
         ${tickArray.map(({ frac, isMajor }) => `\
@@ -141,6 +148,19 @@ function generateRingSvg(period, ringNumber, total) {
             />`
         )
         .join('\n')}
+    </g>
+    <g font-family="Times, 'Times New Roman', Georgia, serif"
+        font-size="14px"
+        text-anchor="middle"
+        dominant-baseline="central"
+    >
+        ${ringLabels.map((label, i, arr) => {
+            const frac = i / arr.length;
+            const placement = `x="${config.viewRadiusMm}" y="${config.viewRadiusMm - centerMm}"`;
+            return `<text ${placement} ${i === 0 ? 'font-weight="bolder" font-size="larger"' : ''} \
+                transform="rotate(${frac * 360},${config.viewRadiusMm},${config.viewRadiusMm})"\
+                >${label}</text>`;
+        })}
     </g>
 </svg>`;
 }
