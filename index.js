@@ -16,6 +16,8 @@ const config = {
     minorTickThicknessMm: 1,
 };
 
+const vc = config.viewRadiusMm;
+
 /** From <https://coolors.co/palettes/trending>, 3rd entry */
 const theme = {
     primaryDark: '#cb997e',
@@ -35,15 +37,13 @@ baseProfile="full" \
 xmlns="http://www.w3.org/2000/svg" \
 xmlns:xlink="http://www.w3.org/1999/xlink" \
 xmlns:ev="http://www.w3.org/2001/xml-events" \
-viewBox="0 0 ${config.viewRadiusMm * 2} ${config.viewRadiusMm * 2}" \
+viewBox="0 0 ${vc * 2} ${vc * 2}" \
 `;
 
 const clockSvg = `
 <svg ${svgProps} style="position: absolute; width: 100vw; height: 100vh;">
     <circle
-        cx="${config.viewRadiusMm}"
-        cy="${config.viewRadiusMm}"
-        r="${config.clockRadiusMm}"
+        cx="${vc}" cy="${vc}" r="${config.clockRadiusMm}"
         stroke="${theme.black}"
         stroke-width="${config.clockBorderMm}"
         fill="${theme.primaryMed}"
@@ -61,15 +61,15 @@ function generateSpinCss(period) {
 const secondsRingSvg = `
 <svg id="secondsRingSvg" ${svgProps} style="position: absolute; width: 100vw; height: 100vh; ${generateSpinCss(1)}">
     <circle
-        cx="${config.viewRadiusMm}"
-        cy="${config.viewRadiusMm}"
+        cx="${vc}"
+        cy="${vc}"
         r="${config.secondsRingRadiusMm}"
         stroke="${theme.black}"
         stroke-width="${config.ringBorderMm}"
         fill="${theme.primaryLight}"
     />
     <path fill="${theme.black}"
-        d="M ${config.viewRadiusMm},${config.viewRadiusMm}
+        d="M ${vc},${vc}
            v -${config.secondsRingRadiusMm}
            a ${config.secondsRingRadiusMm} ${config.secondsRingRadiusMm} 180 0 1 0 ${config.secondsRingRadiusMm * 2}
         "
@@ -116,7 +116,7 @@ const allRingLabels = [
 function generateRingSvg(period, ringNumber, total) {
     const { innerMm, centerMm, outerMm } = getRingRadii(ringNumber, total);
     const ringWidthMm = outerMm - innerMm;
-    const borderProps = `cx="${config.viewRadiusMm}" cy="${config.viewRadiusMm}"`;
+    const borderProps = `cx="${vc}" cy="${vc}"`;
     const [tickCount, tickMajorMod] = ringTickConfig[ringNumber];
 
     const tickArray = Array.from(Array(tickCount))
@@ -130,21 +130,20 @@ function generateRingSvg(period, ringNumber, total) {
         <circle ${borderProps} r="${innerMm}" />
         <circle ${borderProps} r="${outerMm}" />
     </g>
-    <circle cx="${config.viewRadiusMm}" cy="${config.viewRadiusMm}"
+    <circle cx="${vc}" cy="${vc}" r="${centerMm}"
         stroke="${theme.primaryLight}" stroke-width="${outerMm - innerMm - config.ringBorderMm}" fill="none"
-        r="${centerMm}"
     />
     <g stroke="${theme.black}">
         ${tickArray.map(({ frac, isMajor }) => `\
-            <line x1="${config.viewRadiusMm}" x2="${config.viewRadiusMm}"
-                y1="${config.viewRadiusMm - innerMm}"
-                y2="${config.viewRadiusMm - innerMm - ringWidthMm / 2 * (isMajor ? config.majorTickLengthRatio : config.minorTickLengthRatio)}"
-                transform="rotate(${frac * 360},${config.viewRadiusMm},${config.viewRadiusMm})"
+            <line x1="${vc}" x2="${vc}"
+                y1="${vc - innerMm}"
+                y2="${vc - innerMm - ringWidthMm / 2 * (isMajor ? config.majorTickLengthRatio : config.minorTickLengthRatio)}"
+                transform="rotate(${frac * 360},${vc},${vc})"
             />
-            <line x1="${config.viewRadiusMm}" x2="${config.viewRadiusMm}"
-                y1="${config.viewRadiusMm - outerMm}"
-                y2="${config.viewRadiusMm - outerMm + ringWidthMm / 2 * (isMajor ? config.majorTickLengthRatio : config.minorTickLengthRatio)}"
-                transform="rotate(${frac * 360},${config.viewRadiusMm},${config.viewRadiusMm})"
+            <line x1="${vc}" x2="${vc}"
+                y1="${vc - outerMm}"
+                y2="${vc - outerMm + ringWidthMm / 2 * (isMajor ? config.majorTickLengthRatio : config.minorTickLengthRatio)}"
+                transform="rotate(${frac * 360},${vc},${vc})"
             />`
         )
         .join('\n')}
@@ -156,19 +155,17 @@ function generateRingSvg(period, ringNumber, total) {
     >
         ${ringLabels.map((label, i, arr) => {
             const frac = i / arr.length;
-            const placement = `x="${config.viewRadiusMm}" y="${config.viewRadiusMm - centerMm}"`;
+            const placement = `x="${vc}" y="${vc - centerMm}"`;
             return `<text ${placement} ${i === 0 ? 'font-weight="bolder" font-size="larger"' : ''} \
-                transform="rotate(${frac * 360},${config.viewRadiusMm},${config.viewRadiusMm})"\
+                transform="rotate(${frac * 360},${vc},${vc})"\
                 >${label}</text>`;
         })}
     </g>
 </svg>`;
 }
 
-const vc = config.viewRadiusMm;
-
 const markerSvg = `<svg id="marker" ${svgProps} style="position: absolute; width: 100vw; height: 100vh;">
-    <line x1="${config.viewRadiusMm}" x2="${vc}" y1="${vc}" y2="${vc - config.clockRadiusMm - 10}"
+    <line x1="${vc}" x2="${vc}" y1="${vc}" y2="${vc - config.clockRadiusMm - 10}"
         stroke="#F44" stroke-width="1"
     />
     <rect x="${vc - 10}" width="20" y="${vc - config.clockRadiusMm - 10}" height="${config.clockRadiusMm + 10}"
