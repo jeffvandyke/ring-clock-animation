@@ -6,12 +6,14 @@
 const config = {
     viewRadiusMm: 350,
     clockRadiusMm: 300,
-    clockBorderMm: 1,
-    ringBorderMm: 0.7,
+    clockBorderMm: 2,
+    ringBorderMm: 1,
     secondsRingRadiusMm: 50,
     ringGapMm: 5,
-    // TODO: majorTickLengthRatio: 1,
-    // TODO: minorTickLengthRatio: 0.1,
+    majorTickLengthRatio: 0.666,
+    majorTickThicknessMm: 1.7,
+    minorTickLengthRatio: 0.25,
+    minorTickThicknessMm: 1,
 };
 
 /** From <https://coolors.co/palettes/trending>, 3rd entry */
@@ -90,23 +92,56 @@ function getRingRadii(ringNumber, total) {
     };
 }
 
+/** 1st: # of divisions; 2nd: mod of major tick */
+const ringTickConfig = [
+    [0, 0], // (unusued)
+    [60, 5], // seconds wheel (1 min)
+    [60, 5], // minutes wheel (1 hour)
+    [24, 3], // hours wheel (1 day)
+    [300, 10], // (extra)
+    [100, 10], // (extra)
+    [50, 10], // (extra)
+]
+
 function generateRingSvg(period, ringNumber, total) {
     const { innerMm, centerMm, outerMm } = getRingRadii(ringNumber, total);
-    const borderProps = `cx="${config.viewRadiusMm}" cy="${config.viewRadiusMm}" \
-stroke="${theme.black}" stroke-width="${config.ringBorderMm}" fill="none"`;
+    const ringWidthMm = outerMm - innerMm;
+    const borderProps = `cx="${config.viewRadiusMm}" cy="${config.viewRadiusMm}"`;
+    const [tickCount, tickMajorMod] = ringTickConfig[ringNumber];
+
+    const tickArray = Array.from(Array(tickCount))
+        .map((_, i) => ({ frac: i / tickCount, isMajor: i % tickMajorMod === 0 }));
+
     return `
 <svg id="ringNumber${ringNumber}" ${svgProps} style="position: absolute; width: 100vw; height: 100vh; ${generateSpinCss(period)}">
-    <circle ${borderProps} r="${innerMm}" />
-    <circle ${borderProps} r="${outerMm}" />
+    <g stroke="${theme.black}" stroke-width="${config.ringBorderMm}" fill="none">
+        <circle ${borderProps} r="${innerMm}" />
+        <circle ${borderProps} r="${outerMm}" />
+    </g>
     <circle cx="${config.viewRadiusMm}" cy="${config.viewRadiusMm}"
         stroke="${theme.primaryLight}" stroke-width="${outerMm - innerMm - config.ringBorderMm}" fill="none"
-        stroke-dasharray="60,20"
         r="${centerMm}"
     />
+    <!-- TODO: remove once ticks are in place -->
     <line x1="${config.viewRadiusMm}" x2="${config.viewRadiusMm}"
         y1="${config.viewRadiusMm - innerMm}" y2="${config.viewRadiusMm - outerMm}"
         stroke="${theme.black}"
     />
+    <g stroke="${theme.black}">
+        ${tickArray.map(({ frac, isMajor }) => `\
+            <line x1="${config.viewRadiusMm}" x2="${config.viewRadiusMm}"
+                y1="${config.viewRadiusMm - innerMm}"
+                y2="${config.viewRadiusMm - innerMm - ringWidthMm / 2 * (isMajor ? config.majorTickLengthRatio : config.minorTickLengthRatio)}"
+                transform="rotate(${frac * 360},${config.viewRadiusMm},${config.viewRadiusMm})"
+            />
+            <line x1="${config.viewRadiusMm}" x2="${config.viewRadiusMm}"
+                y1="${config.viewRadiusMm - outerMm}"
+                y2="${config.viewRadiusMm - outerMm + ringWidthMm / 2 * (isMajor ? config.majorTickLengthRatio : config.minorTickLengthRatio)}"
+                transform="rotate(${frac * 360},${config.viewRadiusMm},${config.viewRadiusMm})"
+            />`
+        )
+        .join('\n')}
+    </g>
 </svg>`;
 }
 
@@ -118,7 +153,6 @@ let rings /* = [ seconds, minutes, hours... ]*/;
 let periods = [1, 60, 3600, 3600 * 24, 30, 10, 5];
 
 function initDisplay() {
-        // ${generateRingSvg(periods[1], 1, 7)}
     root.innerHTML = `
         ${clockSvg}
         ${secondsRingSvg}
