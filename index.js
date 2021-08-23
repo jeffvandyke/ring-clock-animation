@@ -173,7 +173,7 @@ function generateRingSvg(period, ringNumber, total) {
     </g>
     <g font-family="Times, 'Times New Roman', Georgia, serif"
         font-size="14px"
-        ${ringNumber === 3 ? 'font-weight="bold"' : ''}
+        ${ringTitle === 'HH' ? 'font-weight="bold"' : ''}
         text-anchor="middle"
         dominant-baseline="central"
     >
@@ -237,29 +237,14 @@ function initDisplay() {
 
 function calibrateAnimations() {
     const now = new Date();
-    const [
-        secondsAnimation,
-        minutesAnimation,
-        hoursAnimation,
-        daysAnimation,
-        fiveMinutesAnimation,
-        secDiv30Animation,
-        // secDiv10Animation,
-        secDiv5Animation,
-    ] = rings.map(ring => ring.getAnimations()[0]);
     const secondsFraction = now.getMilliseconds() / 1000;
-    secondsAnimation.currentTime = secondsFraction * 1000;
     const minutesFraction = (now.getSeconds() + secondsFraction) / 60;
-    minutesAnimation.currentTime = minutesFraction * 1000 * 60;
     const hoursFraction = (now.getMinutes() + minutesFraction) / 60;
-    hoursAnimation.currentTime = hoursFraction * 1000 * 60 * 60;
     const daysFraction = (now.getHours() + hoursFraction) / 24;
-    daysAnimation.currentTime = daysFraction * 1000 * 60 * 60 * 24;
+    const animationCurrentTime = daysFraction * 1000 * 60 * 60 * 24;
 
-    fiveMinutesAnimation.currentTime = (hoursFraction * 1000 * 60 * 60);
-    secDiv30Animation.currentTime = (minutesFraction * 1000 * 60);
-    // secDiv10Animation.currentTime = (minutesFraction * 1000 * 60);
-    secDiv5Animation.currentTime = (minutesFraction * 1000 * 60);
+    rings.map(ring => ring.getAnimations()[0])
+        .forEach((anim) => anim.currentTime = animationCurrentTime);
 }
 
 // =============================================================================
