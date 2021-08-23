@@ -258,13 +258,13 @@ const debugTime = document.getElementById('debug-time');
 initDisplay();
 calibrateAnimations();
 
-function step(_timestamp) {
+function debugStep(_timestamp) {
     const now = new Date();
     const secondsFraction = now.getMilliseconds() / 1000;
 
     debugTime.innerText = `${now.toISOString()} - fracSec: ${secondsFraction}`;
     debugTime.style.backgroundColor = secondsFraction < 0.5 ? 'gray' : 'white';
 
-    window.requestAnimationFrame(step);
+    window.requestAnimationFrame(debugStep);
 }
-window.requestAnimationFrame(step);
+// DISABLE DEBUG window.requestAnimationFrame(debugStep);
