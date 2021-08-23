@@ -259,6 +259,12 @@ const debugTime = document.getElementById('debug-time');
 initDisplay();
 calibrateAnimations();
 
+document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === 'visible') {
+        calibrateAnimations();
+    }
+});
+
 function debugStep(_timestamp) {
     const now = new Date();
     const secondsFraction = now.getMilliseconds() / 1000;
