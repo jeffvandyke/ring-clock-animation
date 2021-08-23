@@ -99,9 +99,11 @@ const ringTickConfig = [
     [60, 5], // seconds wheel (1 min)
     [60, 5], // minutes wheel (1 hour)
     [24 * 2, 2], // hours wheel (1 day)
-    [300, 10], // (extra)
-    [100, 10], // (extra)
-    [50, 10], // (extra)
+    [60 * 5, 10], // 5 min
+    // [120, 5], // 2 min
+    [300, 10], // (30 sec)
+    // [100, 10], // (10 sec)
+    [50, 10], // (5 sec)
 ]
 
 const allRingLabels = [
@@ -109,8 +111,11 @@ const allRingLabels = [
     ['0', '', '10', '15', '20', '25', '30', '35', '40', '45', '50', '55'],
     ['0', '5', '10', '15', '20', '25', '30', '35', '40', '45', '50', '55'],
     ['00', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23'],
+    ['5:00', '0:30', '1:00', '1:30', '2:00', '2:30', '3:00', '3:30', '4:00', '4:30'],
+    // ['5:00', '30 sec', '1 min', '1 min 30 sec', '2 min', '2 min 30 sec', '3 min', '3 min 30 sec', '4 min', '4 min 30 sec'],
+    // 2 min ['120', '10', '20', '30', '40', '50', '60', '70', '80', '90', '100', '110'],
+    // 10 sec ['10', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
     ['30', '', '', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29'],
-    ['10', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
     ['5', '1', '2', '3', '4'],
 ]
 
@@ -119,9 +124,9 @@ const ringTitles = [
 ['Seconds', 12],
 ['Minutes', 7],
 ['HH', 11.5],
-['Seconds div 30', 16],
-['Seconds div 10', 16],
-['Seconds div 5', 16]
+['Five Minutes', 28],
+['Seconds', 16],
+['Seconds', 16]
 ];
 
 function generateRingSvg(period, ringNumber, total) {
@@ -204,7 +209,7 @@ const markerSvg = `<svg id="marker" ${svgProps} style="position: absolute; width
 
 /** @type {Array<HTMLElement>} */
 let rings /* = [ seconds, minutes, hours... ]*/;
-let periods = [1, 60, 3600, 3600 * 24, 30, 10, 5];
+let periods = [1, 60, 3600, 3600 * 24, 60 * 5, 30, 5];
 
 function initDisplay() {
     root.innerHTML = `
@@ -232,8 +237,9 @@ function calibrateAnimations() {
         minutesAnimation,
         hoursAnimation,
         daysAnimation,
+        fiveMinutesAnimation,
         secDiv30Animation,
-        secDiv10Animation,
+        // secDiv10Animation,
         secDiv5Animation,
     ] = rings.map(ring => ring.getAnimations()[0]);
     const secondsFraction = now.getMilliseconds() / 1000;
@@ -245,8 +251,9 @@ function calibrateAnimations() {
     const daysFraction = (now.getHours() + hoursFraction) / 24;
     daysAnimation.currentTime = daysFraction * 1000 * 60 * 60 * 24;
 
+    fiveMinutesAnimation.currentTime = (hoursFraction * 1000 * 60 * 60);
     secDiv30Animation.currentTime = (minutesFraction * 1000 * 60);
-    secDiv10Animation.currentTime = (minutesFraction * 1000 * 60);
+    // secDiv10Animation.currentTime = (minutesFraction * 1000 * 60);
     secDiv5Animation.currentTime = (minutesFraction * 1000 * 60);
 }
 
