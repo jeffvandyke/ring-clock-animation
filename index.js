@@ -67,8 +67,8 @@ const ringTitles = [
 ['Minutes', 7],
 ['HH', 11.5],
 ['Five Minutes', 28],
-['Seconds', 16],
-['Seconds', 16],
+['Seconds div 30', 30],
+['Seconds div 5', 16],
 ];
 
 
